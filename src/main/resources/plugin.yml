@@ -1,0 +1,29 @@
+name: DangerMine
+version: '1.0.0-beta'
+main: me.maxos.votive.dangerMine.DangerMine
+api-version: '1.18'
+
+load: POSTWORLD
+depend:
+  - WorldGuard
+
+libraries:
+  - "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.0"
+
+prefix: DangerMine
+website: t.me/official_maxos
+
+commands:
+  dangermine:
+    aliases:
+      - mine
+      - dm
+      - dmine
+    permission: dangermine.admin
+    usage: "Использование: /dangermine reload"
+
+permissions:
+  dangermine.admin:
+    default: op
+
+

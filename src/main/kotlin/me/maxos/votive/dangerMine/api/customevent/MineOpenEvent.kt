@@ -1,9 +1,8 @@
-package me.maxos.votive.dangerMine.event.custom
+package me.maxos.votive.dangerMine.api.customevent
 
 import me.maxos.votive.dangerMine.mine.Mine
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
-import org.bukkit.event.Listener
 
 class MineOpenEvent(
 	val mine: Mine

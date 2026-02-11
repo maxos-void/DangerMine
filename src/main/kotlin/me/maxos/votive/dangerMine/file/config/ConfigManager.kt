@@ -1,10 +1,10 @@
 package me.maxos.votive.dangerMine.file.config
 
 import me.maxos.votive.dangerMine.file.FileManager
-import me.maxos.votive.dangerMine.model.Drop
-import me.maxos.votive.dangerMine.model.LiteLocation
-import me.maxos.votive.dangerMine.model.MineSchema
-import me.maxos.votive.dangerMine.model.Time
+import me.maxos.votive.dangerMine.models.Drop
+import me.maxos.votive.dangerMine.models.LiteLocation
+import me.maxos.votive.dangerMine.models.MineSchema
+import me.maxos.votive.dangerMine.models.Time
 import me.maxos.votive.dangerMine.utils.Debuger.sendDebug
 import me.maxos.votive.dangerMine.utils.TimeParser.toTimer
 import me.maxos.votive.dangerMine.utils.logError

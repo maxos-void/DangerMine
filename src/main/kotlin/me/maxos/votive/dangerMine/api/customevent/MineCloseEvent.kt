@@ -1,4 +1,4 @@
-package me.maxos.votive.dangerMine.event.custom
+package me.maxos.votive.dangerMine.api.customevent
 
 import me.maxos.votive.dangerMine.mine.Mine
 import org.bukkit.event.Event

@@ -1,11 +1,13 @@
-package me.maxos.votive.dangerMine.event.listener.player
+package me.maxos.votive.dangerMine.listeners.player
 
+import me.maxos.votive.dangerMine.api.EventApiManager.callEvent
+import me.maxos.votive.dangerMine.api.customevent.MineBlockBreakEvent
 import me.maxos.votive.dangerMine.mine.Mine
 import me.maxos.votive.dangerMine.mine.block.BrokenBlockScheduler
 import me.maxos.votive.dangerMine.mine.manager.MineManager
-import me.maxos.votive.dangerMine.model.Drop
-import me.maxos.votive.dangerMine.region.PlayerRegion.getMineRegions
-import me.maxos.votive.dangerMine.utils.bukkit.Scheduler.runSyncTaskLater
+import me.maxos.votive.dangerMine.models.Drop
+import me.maxos.votive.dangerMine.extensions.PlayerExtension.getMineRegions
+import me.maxos.votive.dangerMine.utils.Scheduler.runSyncTaskLater
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.Material
@@ -15,6 +17,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.inventory.ItemStack
 import kotlin.random.Random
 
 class BlockBreakListener(
@@ -45,7 +48,7 @@ class BlockBreakListener(
 
 					val blockType = block.type
 					val drop = checkMaterial(mine, blockType) ?: return
-					blockIsBroken(mine, block, blockType, drop)
+					blockIsBroken(mine, block, blockType, drop, player)
 
 				}
 			}
@@ -66,13 +69,21 @@ class BlockBreakListener(
 		}
 	}
 
-	private fun blockIsBroken(mine: Mine, block: Block, oldMaterial: Material, drop: Drop) {
+	private fun blockIsBroken(
+		mine: Mine, block: Block,
+		oldMaterial: Material, drop: Drop,
+		player: Player
+	) {
 		brokenBlockScheduler.addBlock(mine, block, oldMaterial)
-		spawnDrop(block.location.clone(), drop)
+		val dropItem = spawnDrop(block.location.clone(), drop)
+
+		callEvent(MineBlockBreakEvent(player, mine, block, dropItem))
 	}
 
-	private fun spawnDrop(loc: Location, drop: Drop) {
-		loc.world.dropItemNaturally(loc, drop.itemStack)
+	private fun spawnDrop(loc: Location, drop: Drop): ItemStack {
+		val item = drop.itemStack
+		loc.world.dropItemNaturally(loc, item)
+		return item
 	}
 
 	private fun checkGm(player: Player): Boolean {

@@ -1,6 +1,5 @@
-package me.maxos.votive.dangerMine.model
+package me.maxos.votive.dangerMine.models
 
-import me.maxos.votive.dangerMine.file.config.ConfigManager
 import org.bukkit.Material
 
 data class MineSchema(

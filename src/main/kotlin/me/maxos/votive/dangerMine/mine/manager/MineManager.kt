@@ -2,10 +2,10 @@ package me.maxos.votive.dangerMine.mine.manager
 
 import me.maxos.votive.dangerMine.file.config.ConfigManager
 import me.maxos.votive.dangerMine.mine.Mine
-import me.maxos.votive.dangerMine.mine.manager.MineManager.Region.regionNames
 import me.maxos.votive.dangerMine.utils.Debuger.sendDebug
-import me.maxos.votive.dangerMine.utils.bukkit.Scheduler.runAsyncTaskTimer
-import me.maxos.votive.dangerMine.utils.bukkit.Scheduler.stopTask
+import me.maxos.votive.dangerMine.utils.Scheduler.runAsyncTaskTimer
+import me.maxos.votive.dangerMine.utils.Scheduler.stopTask
+import me.maxos.votive.dangerMine.utils.logInfo
 
 class MineManager(
 	private val configManager: ConfigManager,
@@ -41,8 +41,19 @@ class MineManager(
 	val mines: MutableCollection<Mine> = minesByRegion.values
 	val minesNames = minesByRegion.values.map { it.schema.id }.toHashSet()
 
+	fun debug() {
+		logInfo("=============================")
+		logInfo("Всего шахт: ${mines.size}")
+		logInfo("Открыто шахт: ${mines.filter { it.isOpen }.size}")
+		logInfo("Активно сегодня шахт: ${mines.filter { it.isActiveToday }.size}")
+		logInfo("Всего шахт: ${mines.size}")
+		logInfo("Всего шахт: ${mines.size}")
+		logInfo("Всего шахт: ${mines.size}")
+		logInfo("=============================")
+	}
+
 	fun getMine(regionName: String): Mine? = minesByRegion[regionName]
-	fun getMineByName(mineName: String): Mine? = mines.firstOrNull { it.schema.id == mineName }
+	fun getMineById(mineId: String): Mine? = mines.firstOrNull { it.schema.id == mineId }
 
 	fun inRegion(regionName: String): Boolean = regionNames.contains(regionName)
 

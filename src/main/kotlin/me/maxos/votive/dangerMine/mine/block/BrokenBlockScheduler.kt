@@ -1,8 +1,10 @@
 package me.maxos.votive.dangerMine.mine.block
 
+import me.maxos.votive.dangerMine.api.EventApiManager.callEvent
+import me.maxos.votive.dangerMine.api.customevent.MineBlockRestoredEvent
 import me.maxos.votive.dangerMine.mine.Mine
-import me.maxos.votive.dangerMine.utils.bukkit.Scheduler.runSyncTaskLater
-import me.maxos.votive.dangerMine.utils.bukkit.Scheduler.stopTask
+import me.maxos.votive.dangerMine.utils.Scheduler.runSyncTaskLater
+import me.maxos.votive.dangerMine.utils.Scheduler.stopTask
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.command.CommandSender
@@ -71,6 +73,10 @@ class BrokenBlockScheduler {
 		stopTask(tasks[brokenBlock])
 		tasks.remove(brokenBlock)
 		brokenBlock.block.type = brokenBlock.oldType
+
+		callEvent(
+			MineBlockRestoredEvent(brokenBlock.block, brokenBlock.mine)
+		)
 	}
 
 	private fun removeBlock(mine: Mine, block: BrokenBlock) {

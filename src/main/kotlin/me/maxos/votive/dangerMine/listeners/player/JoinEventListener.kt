@@ -1,7 +1,7 @@
-package me.maxos.votive.dangerMine.event.listener.player
+package me.maxos.votive.dangerMine.listeners.player
 
 import me.maxos.votive.dangerMine.mine.manager.MineManager
-import me.maxos.votive.dangerMine.region.PlayerRegion.getMineRegions
+import me.maxos.votive.dangerMine.extensions.PlayerExtension.getMineRegions
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent

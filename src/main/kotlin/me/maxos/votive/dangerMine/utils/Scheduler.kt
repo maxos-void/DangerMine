@@ -1,4 +1,4 @@
-package me.maxos.votive.dangerMine.utils.bukkit
+package me.maxos.votive.dangerMine.utils
 
 import me.maxos.votive.dangerMine.DangerMine
 import org.bukkit.Bukkit

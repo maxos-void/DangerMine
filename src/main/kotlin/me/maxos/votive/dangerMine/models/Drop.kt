@@ -1,4 +1,4 @@
-package me.maxos.votive.dangerMine.model
+package me.maxos.votive.dangerMine.models
 
 import org.bukkit.Material
 import org.bukkit.inventory.ItemStack

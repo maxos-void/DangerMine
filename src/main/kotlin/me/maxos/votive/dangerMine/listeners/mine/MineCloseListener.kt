@@ -1,9 +1,7 @@
-package me.maxos.votive.dangerMine.event.listener.mine
+package me.maxos.votive.dangerMine.listeners.mine
 
-import me.maxos.votive.dangerMine.event.custom.MineCloseEvent
-import me.maxos.votive.dangerMine.region.PlayerRegion.getMineRegions
-import me.maxos.votive.dangerMine.region.PlayerRegion.inMineRegion
-import net.raidstone.wgevents.WorldGuardEvents
+import me.maxos.votive.dangerMine.api.customevent.MineCloseEvent
+import me.maxos.votive.dangerMine.extensions.PlayerExtension.inMineRegion
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

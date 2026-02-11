@@ -1,8 +1,11 @@
-package me.maxos.votive.dangerMine.event.listener.player
+package me.maxos.votive.dangerMine.listeners.player
 
+import me.maxos.votive.dangerMine.api.EventApiManager.callEvent
+import me.maxos.votive.dangerMine.api.customevent.MineEnterEvent
 import me.maxos.votive.dangerMine.mine.manager.MineManager
+import me.maxos.votive.dangerMine.extensions.PlayerExtension.nearbyPlayers
 import me.maxos.votive.dangerMine.utils.Debuger.sendDebug
-import me.maxos.votive.dangerMine.utils.bukkit.Scheduler.runSyncTaskLater
+import me.maxos.votive.dangerMine.utils.Scheduler.runSyncTaskLater
 import net.raidstone.wgevents.events.RegionEnteredEvent
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -31,6 +34,22 @@ class EnterRegionListener(
 				runSyncTaskLater(1, true) {
 					player.knockbackPlayer()
 				}
+				return
+
+			} else {
+				val minPlayers = mine.schema.minPlayers
+				if (minPlayers > 0) {
+					val radius = mine.schema.checkRadius
+					if (player.nearbyPlayers(radius) < minPlayers) {
+						e.isCancelled = true
+						player.sendMessage(
+							"Для входа в шахту требуется $minPlayers игроков поблизости!"
+						)
+						return
+					}
+				}
+
+				callEvent(MineEnterEvent(player, mine))
 			}
 
 		} else sendDebug("Шахта с таким регионом не найдена")

@@ -1,4 +1,4 @@
-package me.maxos.votive.dangerMine.model
+package me.maxos.votive.dangerMine.models
 
 data class LiteLocation(
 	val world: String,

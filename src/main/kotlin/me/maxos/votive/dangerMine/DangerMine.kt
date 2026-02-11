@@ -2,18 +2,19 @@ package me.maxos.votive.dangerMine
 
 import me.maxos.votive.dangerMine.command.MineCmdExecutor
 import me.maxos.votive.dangerMine.command.MineTabCompleter
-import me.maxos.votive.dangerMine.event.listener.mine.MineCloseListener
-import me.maxos.votive.dangerMine.event.listener.player.BlockBreakListener
-import me.maxos.votive.dangerMine.event.listener.player.EnterRegionListener
-import me.maxos.votive.dangerMine.event.listener.player.JoinEventListener
+import me.maxos.votive.dangerMine.listeners.mine.MineCloseListener
+import me.maxos.votive.dangerMine.listeners.player.BlockBreakListener
+import me.maxos.votive.dangerMine.listeners.player.EnterRegionListener
+import me.maxos.votive.dangerMine.listeners.player.JoinEventListener
 import me.maxos.votive.dangerMine.file.FileManager
 import me.maxos.votive.dangerMine.file.config.ConfigManager
 import me.maxos.votive.dangerMine.mine.block.BrokenBlockScheduler
 import me.maxos.votive.dangerMine.mine.manager.MineManager
 import me.maxos.votive.dangerMine.mine.manager.TimerManager
+import me.maxos.votive.dangerMine.placeholderapi.PlaceholderHook
 import me.maxos.votive.dangerMine.utils.Debuger.sendDebug
-import me.maxos.votive.dangerMine.utils.bukkit.Scheduler
-import me.maxos.votive.dangerMine.utils.bukkit.Scheduler.stopAllTask
+import me.maxos.votive.dangerMine.utils.Scheduler
+import me.maxos.votive.dangerMine.utils.Scheduler.stopAllTask
 import org.bukkit.Bukkit
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
@@ -35,11 +36,13 @@ class DangerMine : JavaPlugin() {
 	private lateinit var executor: MineCmdExecutor
 	private lateinit var tabCompleter: MineTabCompleter
 
+	private lateinit var placeholderHook: PlaceholderHook
+
 	override fun onEnable() {
-		sendDebug("НАЧИНАЕМ ЗАПУСК ПУШКИ-ПЕТАРДЫ!!!")
+
 		Scheduler.initialization(this)
 		settings = FileManager(this, "settings.yml") // создание файла
-		sendDebug("НАЧИНАЕМ ЗАПУСК ПУШКИ-ПЕТАРДЫ!!!")
+
 		configManager = ConfigManager(settings)
 
 		timerManager = TimerManager()
@@ -64,6 +67,8 @@ class DangerMine : JavaPlugin() {
 		val cmd = Bukkit.getPluginCommand("dangermine")
 		cmd?.setExecutor(executor)
 		cmd?.tabCompleter = tabCompleter
+
+		placeholderHook = PlaceholderHook(mineManager)
 
 	}
 

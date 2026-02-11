@@ -3,7 +3,7 @@ package me.maxos.votive.dangerMine.command
 import me.maxos.votive.dangerMine.DangerMine
 import me.maxos.votive.dangerMine.mine.block.BrokenBlockScheduler
 import me.maxos.votive.dangerMine.mine.manager.MineManager
-import me.maxos.votive.dangerMine.region.PlayerRegion.getMineRegions
+import me.maxos.votive.dangerMine.extensions.PlayerExtension.getMineRegions
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -47,7 +47,7 @@ class MineCmdExecutor(
 
 			"reset-mine" -> {
 				val mineName = args.getOrNull(1) ?: return false
-				val mine = mineManager.getMineByName(mineName) ?: run {
+				val mine = mineManager.getMineById(mineName) ?: run {
 					notMineToName(sender)
 					return true
 				}
@@ -63,7 +63,7 @@ class MineCmdExecutor(
 			"set-entrance" -> {
 				val player = sender.toPlayer() ?: return true
 				val mineName = args.getOrNull(1) ?: return false
-				val mine = mineManager.getMineByName(mineName) ?: run {
+				val mine = mineManager.getMineById(mineName) ?: run {
 					notMineToName(sender)
 					return true
 				}
@@ -71,6 +71,11 @@ class MineCmdExecutor(
 				val loc = player.location.clone()
 				mine.setLocation(loc)
 				player.sendMessage("Вы успешно изменили точку входа шахты!")
+				return true
+			}
+
+			"debug" -> {
+				mineManager.debug()
 				return true
 			}
 

@@ -27,7 +27,7 @@ class MineTabCompleter: TabCompleter {
 	): List<String?>? {
 		if (args?.size == 1) return subCommands
 
-		val subCommand = args?.getOrNull(1)
+		val subCommand = args?.getOrNull(0)
 		if (subCommand == "reset-mine" || subCommand == "set-entrance")
 			return minesNames?.toList()
 

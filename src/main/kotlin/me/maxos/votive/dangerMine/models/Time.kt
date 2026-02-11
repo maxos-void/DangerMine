@@ -1,7 +1,6 @@
-package me.maxos.votive.dangerMine.model
+package me.maxos.votive.dangerMine.models
 
 import java.time.LocalTime
-import java.time.temporal.ChronoUnit
 
 data class Time(
 	val startTime: LocalTime,

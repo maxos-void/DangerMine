@@ -67,6 +67,20 @@ tasks.shadowJar {
 	archiveClassifier.set("")
 }
 
+publishing {
+	publications {
+		create<MavenPublication>("maven") {
+			from(components["java"])
+			artifact(tasks["sourcesJar"])
+			artifact(tasks["javadocJar"])
+
+			groupId = project.group.toString()
+			artifactId = project.name
+			version = project.version.toString()
+		}
+	}
+}
+
 tasks.processResources {
 	val props = mapOf("version" to version)
 	inputs.properties(props)

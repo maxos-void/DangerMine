@@ -13,10 +13,12 @@ repositories {
 	maven("https://repo.papermc.io/repository/maven-public/") {
 		name = "papermc-repo"
 	}
+	maven("https://repo.extendedclip.com/releases/")
 }
 
 dependencies {
 	compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
+	compileOnly("me.clip:placeholderapi:2.12.2")
 	compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	compileOnly("net.raidstone:WorldGuardEvents:1.18.1")
 }

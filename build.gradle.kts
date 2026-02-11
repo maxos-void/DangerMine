@@ -74,9 +74,18 @@ tasks.jar {
 publishing {
 	publications {
 		create<MavenPublication>("maven") {
-			from(components["java"])
-			artifact(tasks["sourcesJar"])
-			artifact(tasks["javadocJar"])
+			artifact(tasks.shadowJar.get()) {
+				classifier = ""
+				extension = "jar"
+			}
+			artifact(tasks["sourcesJar"]) {
+				classifier = "sources"
+				extension = "jar"
+			}
+			artifact(tasks["javadocJar"]) {
+				classifier = "javadoc"
+				extension = "jar"
+			}
 
 			groupId = project.group.toString()
 			artifactId = project.name

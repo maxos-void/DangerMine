@@ -67,6 +67,10 @@ tasks.shadowJar {
 	archiveClassifier.set("")
 }
 
+tasks.jar {
+	enabled = false
+}
+
 publishing {
 	publications {
 		create<MavenPublication>("maven") {

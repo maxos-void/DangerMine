@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.github.maxos-void" //"me.maxos.votive"
-version = "v1.0.2-beta"
+version = "v1.0.0-beta"
 
 repositories {
 	mavenCentral()

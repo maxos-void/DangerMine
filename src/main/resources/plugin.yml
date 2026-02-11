@@ -1,5 +1,5 @@
 name: DangerMine
-version: '1.0.0-beta'
+version: '1.0.0'
 main: me.maxos.votive.dangerMine.DangerMine
 api-version: '1.18'
 

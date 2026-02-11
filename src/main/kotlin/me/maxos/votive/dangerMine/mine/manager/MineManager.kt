@@ -1,6 +1,6 @@
 package me.maxos.votive.dangerMine.mine.manager
 
-import me.maxos.votive.dangerMine.file.config.ConfigManager
+import me.maxos.votive.dangerMine.file.config.mine.MineConfigFactory
 import me.maxos.votive.dangerMine.mine.Mine
 import me.maxos.votive.dangerMine.utils.Debuger.sendDebug
 import me.maxos.votive.dangerMine.utils.Scheduler.runAsyncTaskTimer
@@ -8,7 +8,7 @@ import me.maxos.votive.dangerMine.utils.Scheduler.stopTask
 import me.maxos.votive.dangerMine.utils.logInfo
 
 class MineManager(
-	private val configManager: ConfigManager,
+	private val mineConfigFactory: MineConfigFactory,
 	private val timerManager: TimerManager
 ) {
 
@@ -16,11 +16,11 @@ class MineManager(
 	private val minesByRegion: HashMap<String, Mine> = hashMapOf()
 	private fun initMines() {
 		minesByRegion.putAll(
-			configManager.createMines()
+			mineConfigFactory.createMines()
 				.mapValuesTo(HashMap()) {
 						(_, schema) ->
 					sendDebug("$schema ЗАРЕГИСТРИРОВАНО")
-					Mine(schema, timerManager, configManager)
+					Mine(schema, timerManager, mineConfigFactory)
 				}
 		)
 		regionNames = minesByRegion.keys.toHashSet()

@@ -4,7 +4,7 @@ import java.util.logging.Logger
 
 object Debuger {
 
-	var debugStatus: Boolean = true
+	var debugStatus: Boolean = false
 
 	private val debug = Logger.getLogger("DangerMine Debug")
 

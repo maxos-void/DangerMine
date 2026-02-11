@@ -7,12 +7,13 @@ import me.maxos.votive.dangerMine.listeners.player.BlockBreakListener
 import me.maxos.votive.dangerMine.listeners.player.EnterRegionListener
 import me.maxos.votive.dangerMine.listeners.player.JoinEventListener
 import me.maxos.votive.dangerMine.file.FileManager
-import me.maxos.votive.dangerMine.file.config.ConfigManager
+import me.maxos.votive.dangerMine.file.config.mine.MineConfigFactory
+import me.maxos.votive.dangerMine.file.config.msg.MessageLoader
+import me.maxos.votive.dangerMine.file.config.msg.Messages
 import me.maxos.votive.dangerMine.mine.block.BrokenBlockScheduler
 import me.maxos.votive.dangerMine.mine.manager.MineManager
 import me.maxos.votive.dangerMine.mine.manager.TimerManager
 import me.maxos.votive.dangerMine.placeholderapi.PlaceholderHook
-import me.maxos.votive.dangerMine.utils.Debuger.sendDebug
 import me.maxos.votive.dangerMine.utils.Scheduler
 import me.maxos.votive.dangerMine.utils.Scheduler.stopAllTask
 import org.bukkit.Bukkit
@@ -21,8 +22,11 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class DangerMine : JavaPlugin() {
 
-	private lateinit var settings: FileManager
-	private lateinit var configManager: ConfigManager
+	private lateinit var settingsFile: FileManager
+	private lateinit var messagesFile: FileManager
+	private lateinit var mineConfigFactory: MineConfigFactory
+	private lateinit var messageLoader: MessageLoader
+	private lateinit var messages: Messages
 
 	private lateinit var timerManager: TimerManager
 	private lateinit var mineManager: MineManager
@@ -41,28 +45,31 @@ class DangerMine : JavaPlugin() {
 	override fun onEnable() {
 
 		Scheduler.initialization(this)
-		settings = FileManager(this, "settings.yml") // создание файла
+		settingsFile = FileManager(this, "settings.yml") // создание файла
+		messagesFile = FileManager(this, "messages.yml")
 
-		configManager = ConfigManager(settings)
+		mineConfigFactory = MineConfigFactory(settingsFile)
+		messageLoader = MessageLoader(messagesFile)
+		messages = Messages(messageLoader)
 
 		timerManager = TimerManager()
-		mineManager = MineManager(configManager, timerManager)
+		mineManager = MineManager(mineConfigFactory, timerManager)
 		brokenBlockScheduler = BrokenBlockScheduler()
 
-		enterRegionListener = EnterRegionListener(mineManager).apply {
+		enterRegionListener = EnterRegionListener(mineManager, messages).apply {
 			register()
 		}
-		blockBreakListener = BlockBreakListener(mineManager, brokenBlockScheduler).apply {
+		blockBreakListener = BlockBreakListener(mineManager, brokenBlockScheduler, messages).apply {
 			register()
 		}
-		joinEventListener = JoinEventListener(mineManager).apply {
+		joinEventListener = JoinEventListener(mineManager, messages).apply {
 			register()
 		}
 		mineCloseListener = MineCloseListener().apply {
 			register()
 		}
 
-		executor = MineCmdExecutor(this, mineManager, brokenBlockScheduler)
+		executor = MineCmdExecutor(this, mineManager, brokenBlockScheduler, messages)
 		tabCompleter = MineTabCompleter().apply { initNames() }
 		val cmd = Bukkit.getPluginCommand("dangermine")
 		cmd?.setExecutor(executor)
@@ -79,7 +86,8 @@ class DangerMine : JavaPlugin() {
 	fun onReload() {
 		stopAllTask()
 		brokenBlockScheduler.forceResetGlobal(null)
-		configManager.reloadConfig()
+		mineConfigFactory.reloadConfig()
+		messages.reload()
 		mineManager.reloadMines()
 		tabCompleter.initNames()
 	}

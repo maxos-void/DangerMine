@@ -3,7 +3,7 @@ package me.maxos.votive.dangerMine.mine
 import me.maxos.votive.dangerMine.api.EventApiManager
 import me.maxos.votive.dangerMine.api.customevent.MineCloseEvent
 import me.maxos.votive.dangerMine.api.customevent.MineOpenEvent
-import me.maxos.votive.dangerMine.file.config.ConfigManager
+import me.maxos.votive.dangerMine.file.config.mine.MineConfigFactory
 import me.maxos.votive.dangerMine.mine.action.MineAction
 import me.maxos.votive.dangerMine.mine.manager.TimerManager
 import me.maxos.votive.dangerMine.models.LiteLocation
@@ -20,7 +20,7 @@ import kotlin.properties.Delegates
 class Mine(
 	val schema: MineSchema,
 	private val timerManager: TimerManager,
-	private val configManager: ConfigManager,
+	private val mineConfigFactory: MineConfigFactory,
 ) {
 
 	private fun callEvent(mineAction: MineAction) {
@@ -72,7 +72,7 @@ class Mine(
 			loc.yaw,
 			loc.pitch
 		).let {
-			configManager.changeLoc(schema, it)
+			mineConfigFactory.changeLoc(schema, it)
 		}
 	}
 

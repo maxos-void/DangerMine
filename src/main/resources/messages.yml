@@ -1,0 +1,10 @@
+prefix: "&8[&6Шахты&8] &r"
+
+messages:
+  closed: "{prefix}&cШахта закрыта!"
+  closed-teleport: "{prefix}&cШахта закрыта! Достаём вас из неё!"
+  no-players: "{prefix}&cДля входа в эту шахту требуется {min-players} игроков по близости!"
+  creative-block: "{prefix}&eВы ломаете блоки в шахте, находясь в креативе!"
+  entrance-set: "{prefix}&aВы успешно изменили точку входа шахты!"
+  not-in-region: "{prefix}&cВы не находитесь в регионе существующей шахты!"
+  not-found: "{prefix}&cШахта с таким названием не обнаружена!"

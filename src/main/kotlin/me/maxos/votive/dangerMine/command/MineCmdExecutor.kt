@@ -4,6 +4,7 @@ import me.maxos.votive.dangerMine.DangerMine
 import me.maxos.votive.dangerMine.mine.block.BrokenBlockScheduler
 import me.maxos.votive.dangerMine.mine.manager.MineManager
 import me.maxos.votive.dangerMine.extensions.PlayerExtension.getMineRegions
+import me.maxos.votive.dangerMine.file.config.msg.Messages
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -12,7 +13,8 @@ import org.bukkit.entity.Player
 class MineCmdExecutor(
 	private val plugin: DangerMine,
 	private val mineManager: MineManager,
-	private val brokenBlockScheduler: BrokenBlockScheduler
+	private val brokenBlockScheduler: BrokenBlockScheduler,
+	private val messages: Messages
 ): CommandExecutor {
 	override fun onCommand(
 		sender: CommandSender,
@@ -70,7 +72,7 @@ class MineCmdExecutor(
 
 				val loc = player.location.clone()
 				mine.setLocation(loc)
-				player.sendMessage("Вы успешно изменили точку входа шахты!")
+				player.sendMessage(messages.msg("entrance-set"))
 				return true
 			}
 
@@ -91,9 +93,9 @@ class MineCmdExecutor(
 	}
 
 	private fun notMineToRegion(sender: CommandSender) {
-		sender.sendMessage("Вы не находитесь в регионе существующей шахты!")
+		sender.sendMessage(messages.msg("not-in-region"))
 	}
 	private fun notMineToName(sender: CommandSender) {
-		sender.sendMessage("Шахта с таким названием не обнаружена!")
+		sender.sendMessage(messages.msg("not-found"))
 	}
 }

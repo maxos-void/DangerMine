@@ -1,40 +1,30 @@
-package me.maxos.votive.dangerMine.file.config
+package me.maxos.votive.dangerMine.file.config.mine
 
+import me.maxos.votive.dangerMine.file.Config
 import me.maxos.votive.dangerMine.file.FileManager
 import me.maxos.votive.dangerMine.models.Drop
 import me.maxos.votive.dangerMine.models.LiteLocation
 import me.maxos.votive.dangerMine.models.MineSchema
 import me.maxos.votive.dangerMine.models.Time
+import me.maxos.votive.dangerMine.utils.ColorUtils
+import me.maxos.votive.dangerMine.utils.Debuger
 import me.maxos.votive.dangerMine.utils.Debuger.sendDebug
 import me.maxos.votive.dangerMine.utils.TimeParser.toTimer
 import me.maxos.votive.dangerMine.utils.logError
 import org.bukkit.Material
 import org.bukkit.configuration.ConfigurationSection
-import org.bukkit.configuration.file.FileConfiguration
 
-class ConfigManager(
-	private val fileManager: FileManager,
-) {
+class MineConfigFactory(
+	fileManager: FileManager,
+): Config(fileManager) {
 	companion object {
 		const val MAIN_SECTION_NAME = "mines"
 	}
-
-	private lateinit var config: FileConfiguration
 
 	init {
 		initConfig()
 	}
 
-	fun reloadConfig() {
-		fileManager.reloadConfig()
-		initConfig()
-	}
-
-	private fun initConfig() {
-		config = fileManager.getConfig()
-		sendDebug("КОНФИГ NULL?: ${config == null}")
-		sendDebug("$config")
-	}
 
 	fun createMines(): HashMap<String, MineSchema> {
 		val minesMap = hashMapOf<String, MineSchema>()
@@ -52,7 +42,7 @@ class ConfigManager(
 			val blockMaterials = breakageMaterialsSection.getKeys(false)
 			val blocksSections = blockMaterials.mapNotNull {
 				getRequiredSection(breakageMaterialsSection,it) ?: run {
-					sendDebug("blocksSections null")
+					Debuger.sendDebug("blocksSections null")
 					return@mapNotNull null
 				}
 			}
@@ -82,10 +72,10 @@ class ConfigManager(
 
 			minesMap[regionName] = MineSchema(
 				mineId,
-				mineSection.getString("name") ?: run {
+				ColorUtils.colorize(mineSection.getString("name") ?: run {
 					sendDebug("mineSection.getString(\"name\") == null!!!")
 					return@forEach
-				},
+				}),
 				regionName,
 				mineSection.getInt("recovery"),
 				mineSection.getInt("radius"),
@@ -139,7 +129,7 @@ class ConfigManager(
 				locSelection.getDouble("pitch").toFloat(),
 			)
 		} catch (e: Exception) {
-			sendDebug("Не получилось зарегистрировать локацию")
+			Debuger.sendDebug("Не получилось зарегистрировать локацию")
 			null
 		}
 	}
@@ -155,12 +145,12 @@ class ConfigManager(
 				return it.getKeys(false).mapNotNull { item ->
 					val itemSection = getRequiredSection(it, item)
 						?: run {
-							sendDebug("drop-materials null (itemSection)")
+							Debuger.sendDebug("drop-materials null (itemSection)")
 							return@mapNotNull null
 						}
 					createDrop(itemSection)
 						?: run {
-							sendDebug("drop-materials null (createDrop)")
+							Debuger.sendDebug("drop-materials null (createDrop)")
 							return@mapNotNull null
 						}
 				}.toHashSet()
@@ -172,7 +162,7 @@ class ConfigManager(
 	private fun createDrop(itemSection: ConfigurationSection): Drop? {
 		val chance = itemSection.getInt("chance")
 		val amountSection = getRequiredSection(itemSection, "drop-amount") ?: run {
-			sendDebug("drop-amounts null")
+			Debuger.sendDebug("drop-amounts null")
 			return null
 		}
 
@@ -187,24 +177,5 @@ class ConfigManager(
 				it.getInt("min")..it.getInt("max")
 			}
 		)
-	}
-
-
-
-	private fun getRequiredSection(parentSection: ConfigurationSection, name: String): ConfigurationSection? {
-		val section = parentSection.getConfigurationSection(name)
-		if (section == null) {
-			logError("Секция конфига $name повреждена!")
-			return null
-		}
-		return section
-	}
-	private fun getRequiredSection(name: String): ConfigurationSection? {
-		val section = config.getConfigurationSection(name)
-		if (section == null) {
-			logError("Секция конфига $name повреждена!")
-			return null
-		}
-		return section
 	}
 }

@@ -7,6 +7,7 @@ import me.maxos.votive.dangerMine.mine.block.BrokenBlockScheduler
 import me.maxos.votive.dangerMine.mine.manager.MineManager
 import me.maxos.votive.dangerMine.models.Drop
 import me.maxos.votive.dangerMine.extensions.PlayerExtension.getMineRegions
+import me.maxos.votive.dangerMine.file.config.msg.Messages
 import me.maxos.votive.dangerMine.utils.Scheduler.runSyncTaskLater
 import org.bukkit.GameMode
 import org.bukkit.Location
@@ -22,7 +23,8 @@ import kotlin.random.Random
 
 class BlockBreakListener(
 	private val mineManager: MineManager,
-	private val brokenBlockScheduler: BrokenBlockScheduler
+	private val brokenBlockScheduler: BrokenBlockScheduler,
+	private val messages: Messages
 ): Listener {
 
 	private val breakingGmPlayer = hashSetOf<Player>()
@@ -42,7 +44,7 @@ class BlockBreakListener(
 					e.isCancelled = true
 
 					if (!mine.isOpen) {
-						player.sendMessage("Шахта закрыта!")
+						player.sendMessage(messages.msg("closed"))
 						return
 					}
 
@@ -89,8 +91,7 @@ class BlockBreakListener(
 	private fun checkGm(player: Player): Boolean {
 		if (player.gameMode == GameMode.CREATIVE) {
 			if (!breakingGmPlayer.contains(player)) {
-				player.sendMessage("Вы ломаете блоки в шахте, находясь в креативе!")
-				player.sendMessage("Они не будут восстановлены!")
+				player.sendMessage(messages.msg("creative-block"))
 				breakingGmPlayer.add(player)
 				runSyncTaskLater(60) {
 					breakingGmPlayer.remove(player)

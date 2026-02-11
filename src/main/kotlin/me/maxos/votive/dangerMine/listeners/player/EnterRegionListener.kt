@@ -4,6 +4,7 @@ import me.maxos.votive.dangerMine.api.EventApiManager.callEvent
 import me.maxos.votive.dangerMine.api.customevent.MineEnterEvent
 import me.maxos.votive.dangerMine.mine.manager.MineManager
 import me.maxos.votive.dangerMine.extensions.PlayerExtension.nearbyPlayers
+import me.maxos.votive.dangerMine.file.config.msg.Messages
 import me.maxos.votive.dangerMine.utils.Debuger.sendDebug
 import me.maxos.votive.dangerMine.utils.Scheduler.runSyncTaskLater
 import net.raidstone.wgevents.events.RegionEnteredEvent
@@ -13,7 +14,8 @@ import org.bukkit.event.Listener
 import org.bukkit.util.Vector
 
 class EnterRegionListener(
-	private val mineManager: MineManager
+	private val mineManager: MineManager,
+	private val messages: Messages
 ): Listener {
 
 	@EventHandler
@@ -29,7 +31,7 @@ class EnterRegionListener(
 
 			val mine = mineManager.getMine(regionName) ?: return
 			if (!mine.isOpen) {
-				player.sendMessage("${mine.schema.name} закрыта!")
+				player.sendMessage(messages.msg("closed"))
 				e.isCancelled = true
 				runSyncTaskLater(1, true) {
 					player.knockbackPlayer()
@@ -43,7 +45,11 @@ class EnterRegionListener(
 					if (player.nearbyPlayers(radius) < minPlayers) {
 						e.isCancelled = true
 						player.sendMessage(
-							"Для входа в шахту требуется $minPlayers игроков поблизости!"
+							messages.msg("no-players")
+								.replace(
+									"{min-players}",
+									minPlayers.toString()
+								)
 						)
 						return
 					}
@@ -55,7 +61,7 @@ class EnterRegionListener(
 		} else sendDebug("Шахта с таким регионом не найдена")
 	}
 
-	private fun Player.knockbackPlayer(horizontal: Double = 1.0, vertical: Double = 0.5) {
+	private fun Player.knockbackPlayer(horizontal: Double = 0.3, vertical: Double = 0.2) {
 		val direction = this.location.direction.normalize()
 		val horizontalVelocity = direction.multiply(-horizontal)
 		val verticalVelocity = Vector(0.0, vertical, 0.0)

@@ -16,5 +16,6 @@ data class MineSchema(
 	val times: HashSet<Time>,
 	val liteLocation: LiteLocation
 ) {
+
 	val ranges = times.map { it.range }.toHashSet()
 }

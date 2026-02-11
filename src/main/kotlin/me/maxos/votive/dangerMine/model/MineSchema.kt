@@ -1,5 +1,6 @@
 package me.maxos.votive.dangerMine.model
 
+import me.maxos.votive.dangerMine.file.config.ConfigManager
 import org.bukkit.Material
 
 data class MineSchema(
@@ -14,6 +15,7 @@ data class MineSchema(
 	val breakageMaterials: HashSet<Material>,
 	val drop: HashMap<Material, HashSet<Drop>>,
 	val times: HashSet<Time>,
+	val liteLocation: LiteLocation
 ) {
 	val ranges = times.map { it.range }.toHashSet()
 }

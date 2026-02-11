@@ -4,6 +4,7 @@ import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
+import java.io.IOException
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
 
@@ -62,4 +63,25 @@ class FileManager(
 
 	// Получение конфига
 	fun getConfig(): FileConfiguration = config
+
+	fun saveConfig() {
+		try {
+			config.save(configFile)
+			logger.info("Конфигурационный файл $fileName сохранен!")
+		} catch (e: IOException) {
+			logger.severe("Не удалось сохранить конфигурационный файл $fileName: ${e.message}")
+		}
+	}
+
+	// Установить значение и сохранить
+	fun setValue(path: String, value: Any?) {
+		config.set(path, value)
+		saveConfig()
+	}
+	// установить целую секцию
+	fun setSection(path: String, section: Map<String, Any>) {
+		config.set(path, section)
+		saveConfig()
+	}
+
 }

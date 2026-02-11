@@ -6,6 +6,7 @@ api-version: '1.18'
 load: POSTWORLD
 depend:
   - WorldGuard
+  - WorldGuardEvents
 
 libraries:
   - "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.0"
@@ -20,7 +21,7 @@ commands:
       - dm
       - dmine
     permission: dangermine.admin
-    usage: "Использование: /dangermine reload"
+    usage: "Использование: /dangermine reload|reset-radius|reset-mine|reset-global"
 
 permissions:
   dangermine.admin:

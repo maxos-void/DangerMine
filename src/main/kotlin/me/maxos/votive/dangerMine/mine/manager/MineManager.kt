@@ -2,6 +2,7 @@ package me.maxos.votive.dangerMine.mine.manager
 
 import me.maxos.votive.dangerMine.file.config.ConfigManager
 import me.maxos.votive.dangerMine.mine.Mine
+import me.maxos.votive.dangerMine.mine.manager.MineManager.Region.regionNames
 import me.maxos.votive.dangerMine.utils.Debuger.sendDebug
 import me.maxos.votive.dangerMine.utils.bukkit.Scheduler.runAsyncTaskTimer
 import me.maxos.votive.dangerMine.utils.bukkit.Scheduler.stopTask
@@ -18,9 +19,18 @@ class MineManager(
 			configManager.createMines()
 				.mapValuesTo(HashMap()) {
 						(_, schema) ->
-					Mine(schema, timerManager)
+					sendDebug("$schema ЗАРЕГИСТРИРОВАНО")
+					Mine(schema, timerManager, configManager)
 				}
 		)
+		regionNames = minesByRegion.keys.toHashSet()
+		sendDebug("Регионы шахт: $regionNames")
+	}
+
+	// сет с названиями регионов всех шахт (необходимо для ивентов)
+	companion object Region {
+		var regionNames: HashSet<String> = hashSetOf()
+			private set
 	}
 
 	init {
@@ -28,14 +38,12 @@ class MineManager(
 		pinger()
 	}
 
-	private val mines: MutableCollection<Mine> = minesByRegion.values
+	val mines: MutableCollection<Mine> = minesByRegion.values
+	val minesNames = minesByRegion.values.map { it.schema.id }.toHashSet()
 
 	fun getMine(regionName: String): Mine? = minesByRegion[regionName]
+	fun getMineByName(mineName: String): Mine? = mines.firstOrNull { it.schema.id == mineName }
 
-	// сет с названиями регионов всех шахт (необходимо для ивентов)
-	private val regionNames: HashSet<String> by lazy {
-		minesByRegion.keys.toHashSet()
-	}
 	fun inRegion(regionName: String): Boolean = regionNames.contains(regionName)
 
 	private var taskId = -1
@@ -58,6 +66,10 @@ class MineManager(
 	private fun update() {
 		minesByRegion.clear()
 		initMines()
+		minesNames.apply {
+			clear()
+			addAll(minesByRegion.values.map { it.schema.id })
+		}
 	}
 
 }

@@ -1,36 +1,15 @@
-package me.maxos.votive.dangerMine.event
+package me.maxos.votive.dangerMine.event.listener.player
 
 import me.maxos.votive.dangerMine.mine.manager.MineManager
 import me.maxos.votive.dangerMine.utils.Debuger.sendDebug
+import me.maxos.votive.dangerMine.utils.bukkit.Scheduler.runSyncTaskLater
 import net.raidstone.wgevents.events.RegionEnteredEvent
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
-import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
 import org.bukkit.util.Vector
 
-class PlayerEnterMineEvent(
-	val player: Player,
-	val mineName: String
-) : Event() {
-
-	companion object {
-		private val handlers = HandlerList()
-
-		@JvmStatic
-		fun getHandlerList(): HandlerList {
-			return handlers
-		}
-	}
-
-	override fun getHandlers(): HandlerList {
-		return getHandlerList()
-	}
-}
-
-class PlayerEnterRegion(
+class EnterRegionListener(
 	private val mineManager: MineManager
 ): Listener {
 
@@ -38,19 +17,23 @@ class PlayerEnterRegion(
 	fun onEnterRegion(e: RegionEnteredEvent) {
 		val regionName = e.regionName
 		val player = e.player ?: return
+
+		sendDebug("Игрок ${player.name} зашёл в регион $regionName")
+
 		if (mineManager.inRegion(regionName)) {
+
+			sendDebug("Шахта с таким регионом найдена")
 
 			val mine = mineManager.getMine(regionName) ?: return
 			if (!mine.isOpen) {
 				player.sendMessage("${mine.schema.name} закрыта!")
 				e.isCancelled = true
-				player.knockbackPlayer()
-			} else {
-				// если удачно зашли в шахту
-				val event = PlayerEnterMineEvent(player, mine.schema.name)
-				Bukkit.getPluginManager().callEvent(event)
+				runSyncTaskLater(1, true) {
+					player.knockbackPlayer()
+				}
 			}
-		}
+
+		} else sendDebug("Шахта с таким регионом не найдена")
 	}
 
 	private fun Player.knockbackPlayer(horizontal: Double = 1.0, vertical: Double = 0.5) {
@@ -59,11 +42,6 @@ class PlayerEnterRegion(
 		val verticalVelocity = Vector(0.0, vertical, 0.0)
 		// откидываем плеера с инверсией
 		this.velocity = horizontalVelocity.add(verticalVelocity)
-	}
-
-	@EventHandler
-	fun success(e: PlayerEnterMineEvent) {
-		sendDebug("Игрок ${e.player.name} успешно зашёл в шахту ${e.mineName}")
 	}
 
 }

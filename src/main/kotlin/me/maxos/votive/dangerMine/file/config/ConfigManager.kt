@@ -2,6 +2,7 @@ package me.maxos.votive.dangerMine.file.config
 
 import me.maxos.votive.dangerMine.file.FileManager
 import me.maxos.votive.dangerMine.model.Drop
+import me.maxos.votive.dangerMine.model.LiteLocation
 import me.maxos.votive.dangerMine.model.MineSchema
 import me.maxos.votive.dangerMine.model.Time
 import me.maxos.votive.dangerMine.utils.Debuger.sendDebug
@@ -94,10 +95,53 @@ class ConfigManager(
 				blockMaterials.mapNotNull { Material.getMaterial(it) }.toHashSet(),
 				drop,
 				times,
+				getLiteLocation(
+					getRequiredSection(
+						mineSection, "entrance"
+					) ?: return@forEach
+				) ?: return@forEach
 			)
 		}
 
 		return minesMap
+	}
+
+	fun changeLoc(mineSchema: MineSchema, liteLocation: LiteLocation) {
+		val mainSection = getRequiredSection(MAIN_SECTION_NAME) ?: return
+		val mineSection = getRequiredSection(mainSection, mineSchema.id)
+			?: return
+		val locSection = getRequiredSection(mineSection, "entrance")
+			?: return
+		val patch = locSection.currentPath ?: return
+		liteLocation.let { loc ->
+			fileManager.setSection(
+				patch,
+				mapOf(
+					"world" to loc.world,
+					"x" to loc.x,
+					"y" to loc.y,
+					"z" to loc.z,
+					"yaw" to loc.yaw.toDouble(),
+					"pitch" to loc.pitch.toDouble(),
+				)
+			)
+		}
+	}
+
+	private fun getLiteLocation(locSelection: ConfigurationSection): LiteLocation? {
+		return try {
+			LiteLocation(
+				locSelection.getString("world")!!,
+				locSelection.getDouble("x"),
+				locSelection.getDouble("y"),
+				locSelection.getDouble("z"),
+				locSelection.getDouble("yaw").toFloat(),
+				locSelection.getDouble("pitch").toFloat(),
+			)
+		} catch (e: Exception) {
+			sendDebug("Не получилось зарегистрировать локацию")
+			null
+		}
 	}
 
 	private fun getMaterial(name: String): Material? = Material.getMaterial(name) ?: run {
